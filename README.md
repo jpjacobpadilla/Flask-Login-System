@@ -1,3 +1,3 @@
 # Flask Login System
 
-<img src="example.gif" width="900" />
+<img src="example.gif" />
