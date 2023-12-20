@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{url_for('static', filename='main.css')}}">
+    <title>Home</title>
+</head>
+<body>
+    {% if username %}
+        <h1>Welcome <span class="gradiant-text">{{username}}</span>!</h1>
+        <a class="text-link" href="/logout">Logout</a>
+    {% endif %}
+</body>
+</html>

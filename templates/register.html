@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{url_for('static', filename='main.css')}}">
+    <title>Register</title>
+</head>
+<body>
+    <form id="user-form" class="round-corners" action="/register-user" method="post">
+        <div class="form-item">
+            <label for="username">Username:</label>
+            <input class="form-input round-corners" type="text" name="username" required>
+        </div>
+        <div class="form-item">
+            <label for="email">Email:</label>
+            <input class="form-input round-corners" type="email" name="email" required>
+        </div>
+        <div class="form-item">
+            <label for="password">Password:</label>
+            <input class="form-input round-corners" type="password" name="password" required>
+        </div>
+        <div class="form-item">
+            <label for="password">Confirm Password:</label>
+            <input class="form-input round-corners" type="password" name="check-password" required>
+        </div>
+
+        {% if error_msg %}<p id="error-msg">{{error_msg}}</p>{% endif %}
+
+        <input id="form-submit" class="form-item round-corners" type="submit" value="Register">
+
+        <div id="switch-form">
+            <p>Already have an account? <a class="text-link" href="/login">Login</a></p>
+        </div>
+    </form>
+</body>
+</html>

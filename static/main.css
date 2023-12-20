@@ -1,0 +1,85 @@
+:root {
+    --border-radius: 5px;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: snow;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.text-link {
+    color: dodgerblue;
+}
+
+#user-form {
+    background: white;
+    padding: max(4vmin, 15px);
+    width: min(90vw, 275px);
+    box-shadow: 0 0 20px rgba(5, 50, 50, 0.1);
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 2vh;
+}
+
+.form-item {
+    width: 100%;
+}
+
+.round-corners {
+    border-radius: var(--border-radius);
+}
+
+.form-input {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0.5em;
+    margin: 0.5em 0;
+    border: 1px solid silver;
+    outline-color: dodgerblue;
+}
+
+#form-submit {
+    width: 100%;
+    padding: 0.7em;
+    margin-top: 1vh;
+    border: none;
+    background-color: dodgerblue;
+    color: white;
+    cursor: pointer;
+    font-size: 1rem;
+    letter-spacing: .1rem;
+    transition: background-color ease-in-out 200ms;
+}
+
+#form-submit:hover {
+    background-color: royalblue;
+}
+
+#switch-form p {
+    font-size: .9em; 
+    margin: 0;
+}
+
+#error-msg {
+    color: crimson;
+    margin: 0;
+}
+
+/* Home page */
+h1 {
+    font-size: clamp(1rem, 7vw, 4rem);
+    text-wrap: nowrap;
+}
+
+.gradiant-text {
+    background: -webkit-linear-gradient(dodgerblue, purple);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}

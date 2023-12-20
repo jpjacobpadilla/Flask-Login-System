@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{url_for('static', filename='main.css')}}">
+    <title>Login</title>
+</head>
+<body>
+    <form id="user-form" class="round-corners" action="/verify-user" method="post">
+        <div class="form-item">
+            <label for="username">Username:</label>
+            <input class="form-input round-corners" type="text" id="username" name="username" required>
+        </div>
+        <div class="form-item">
+            <label for="password">Password:</label>
+            <input class="form-input round-corners" type="password" id="password" name="password" required>
+        </div>
+        <div class="form-item">
+            <input type="checkbox" id="remember-me" name="remember-me">
+            <label for="remember-me">Remember Me</label>
+        </div>
+
+        {% if error_msg %}<p id="error-msg">{{error_msg}}</p>{% endif %}
+
+        <input id="form-submit" class="form-item round-corners" type="submit" value="Login">
+
+        <div id="switch-form">
+            <p>Don't have an account? <a class="text-link" href="/register">Register</a></p>
+        </div>
+    </form>
+</body>
+</html>
