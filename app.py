@@ -1,5 +1,6 @@
 import sqlite3
 import contextlib
+import re
 
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
@@ -27,23 +28,16 @@ def login():
 
 @app.route('/verify-user', methods=['POST'])
 def verify_user():
-    keys = {'username', 'password'}
-    if len(keys - request.form.keys()) > 0: 
-        return render_template('login.html', error_msg='Please fill out the entire form')
-    
-    # Create variables for easy access
     username = request.form['username']
     password = request.form['password']
     
     query = 'select id, username, password, email from users where username = :username'
 
-    # Will automatically close connection
     with contextlib.closing(sqlite3.connect(database)) as conn:
-        # Starts transaction that will auto commit at the end if no errors.
         with conn:
             account = conn.execute(query, {'username': username}).fetchone()
 
-    if not account: return render_template('login.html', error_msg='Wrong username')
+    if not account: return render_template('login.html', error_msg='Username does not exist')
 
     try:
         ph = PasswordHasher()
@@ -52,64 +46,69 @@ def verify_user():
     except VerifyMismatchError:
         return render_template('login.html', error_msg='Incorrect password')
 
-    else:
-        hashed_password = ph.hash(password)
-        if ph.check_needs_rehash(hashed_password):
-            query = 'update set password = :password where id = :id'
-            params = {'password': hashed_password, 'id': account[1]}
+    hashed_password = ph.hash(password)
+    if ph.check_needs_rehash(hashed_password):
+        query = 'update set password = :password where id = :id'
+        params = {'password': hashed_password, 'id': account[0]}
 
-            # Will automatically close connection
-            with contextlib.closing(sqlite3.connect(database)) as conn:
-                # Starts transaction that will auto commit at the end if no errors.
-                with conn:
-                    conn.execute(query, params)
+        with contextlib.closing(sqlite3.connect(database)) as conn:
+            with conn:
+                conn.execute(query, params)
 
-        session['logged_in'] = True
-        session['id'] = account[0]
-        session['username'] = account[1]
-        session['email'] = account[3]
+    session['logged_in'] = True
+    session['id'] = account[0]
+    session['username'] = account[1]
+    session['email'] = account[3]
 
-        if 'remember-me' in request.form:
-            session.permanent = True 
+    if 'remember-me' in request.form:
+        session.permanent = True 
     
     return redirect('/')
 
 
 @app.route('/register-user', methods=['POST'])
 def register_user():
-    keys = {'username', 'password', 'email', 'confirm-password'}
-    if len(keys - request.form.keys()) > 0: 
-        return render_template('register.html', error_msg='Please fill out the entire form')
+    password = request.form['password']
+    confirm_password = request.form['confirm-password']
+    username = request.form['username']
+    email = request.form['email']
+
+    if password != confirm_password:
+        return render_template('register.html', error_msg='Passwords do not match')
+    if not re.match(r'^[a-zA-Z0-9]+$', username):
+        return render_template('register.html', error_msg='Username must only be letters and numbers')
+    if len(username) < 3:
+        return render_template('register.html', error_msg='Username must be 3 or more characters')
+    if len(username) > 25:
+        return render_template('register.html', error_msg='Username must be 25 or less characters')
 
     query = 'select id from users where username = :username;'
-    # Will automatically close connection
     with contextlib.closing(sqlite3.connect(database)) as conn:
-        # Starts transaction that will auto commit at the end if no errors.
         with conn:
-            conn.execute(query, {'username': request.form['username']}) 
+            result = conn.execute(query, {'username': username}).fetchone()
+    if result:
+        return render_template('register.html', error_msg='Username already exists')
 
 
     pw = PasswordHasher()
-    hashed_password = pw.hash(request.form['password'])
+    hashed_password = pw.hash(password)
 
     query = 'insert into users(username, password, email) values (:username, :password, :email);'
 
     params = {
-        'username': request.form['username'],
+        'username': username,
         'password': hashed_password,
-        'email': request.form['email']
+        'email': email
     }
 
-    # Will automatically close connection
     with contextlib.closing(sqlite3.connect(database)) as conn:
-        # Starts transaction that will auto commit at the end if no errors.
         with conn:
-            conn.execute(query, params)
+            result = conn.execute(query, params)
 
     session['logged_in'] = True
-    session['id'] = 'test'
-    session['username'] = request.form['username']
-    session['email'] = request.form['email']
+    session['id'] = result.lastrowid
+    session['username'] = username
+    session['email'] = email
 
     if 'remember-me' in request.form:
         session.permanent = True 

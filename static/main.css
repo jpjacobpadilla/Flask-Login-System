@@ -68,6 +68,7 @@ body {
 }
 
 #error-msg {
+    text-align: center;
     color: crimson;
     margin: 0;
 }
