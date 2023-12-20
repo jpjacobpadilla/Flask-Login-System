@@ -5,49 +5,7 @@ import contextlib
 import os
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
-
-def create_connection(db_file):
-    """ Create a database connection to a SQLite database """
-    conn = None
-    try:
-        conn = sqlite3.connect(db_file)
-        print(f"Connected to SQLite, version {sqlite3.version}")
-    except sqlite3.Error as e:
-        print(e)
-    finally:
-        if conn:
-            conn.close()
-
-def create_table(db_file):
-    """ Create a table for users """
-    conn = sqlite3.connect(db_file)
-    cur = conn.cursor()
-    cur.execute('''
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY,
-            username TEXT NOT NULL,
-            password TEXT NOT NULL,
-            email TEXT
-        )
-    ''')
-    conn.commit()
-    conn.close()
-
-def check_db_exists(db_file):
-    """ Check if the SQLite database file exists """
-    return os.path.exists(db_file)
-
-# Path to your database file
-database = "users.db"
-
-# Check if the database exists
-if not check_db_exists(database):
-    print("Database does not exist. Creating new database.")
-    create_connection(database)
-    create_table(database)
-else:
-    print("Database already exists. Connecting to existing database.")
-
+from create_database import setup_database
 
 def login_required(func):
     @wraps(func)
@@ -62,6 +20,8 @@ def login_required(func):
 
 app = Flask(__name__)
 
+database = "users.db"
+setup_database(name=database)
 # A secret key that will be used for securely signing the session cookie and 
 # can be used for any other security related needs by extensions or your application.
 # https://flask.palletsprojects.com/en/2.3.x/config/#SECRET_KEY
