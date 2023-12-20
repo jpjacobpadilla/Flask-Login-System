@@ -9,20 +9,20 @@
 <body>
     <form id="user-form" class="round-corners" action="/register-user" method="post">
         <div class="form-item">
-            <label for="user-username">Username:</label>
-            <input id="user-username" class="form-input round-corners" type="text" name="username" required>
+            <label for="register-username">Username:</label>
+            <input id="register-username" class="form-input round-corners" type="text" name="username" required>
         </div>
         <div class="form-item">
-            <label for="user-email">Email:</label>
-            <input id="user-email" class="form-input round-corners" type="email" name="email" required>
+            <label for="register-email">Email:</label>
+            <input id="register-email" class="form-input round-corners" type="email" name="email" required>
         </div>
         <div class="form-item">
-            <label for="user-password">Password:</label>
-            <input id="user-password" class="form-input round-corners" type="password" name="password" required>
+            <label for="register-password">Password:</label>
+            <input id="register-password" class="form-input round-corners" type="password" name="password" required>
         </div>
         <div class="form-item">
-            <label for="user-password">Confirm Password:</label>
-            <input id="user-password" class="form-input round-corners" type="password" name="confirm-password" required>
+            <label for="register-password">Confirm Password:</label>
+            <input id="register-password" class="form-input round-corners" type="password" name="confirm-password" required>
         </div>
 
         {% if error_msg %}<p id="error-msg">{{error_msg}}</p>{% endif %}
