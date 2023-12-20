@@ -9,20 +9,20 @@
 <body>
     <form id="user-form" class="round-corners" action="/register-user" method="post">
         <div class="form-item">
-            <label for="username">Username:</label>
-            <input class="form-input round-corners" type="text" name="username" required>
+            <label for="user-username">Username:</label>
+            <input id="user-username" class="form-input round-corners" type="text" name="username" required>
         </div>
         <div class="form-item">
-            <label for="email">Email:</label>
-            <input class="form-input round-corners" type="email" name="email" required>
+            <label for="user-email">Email:</label>
+            <input id="user-email" class="form-input round-corners" type="email" name="email" required>
         </div>
         <div class="form-item">
-            <label for="password">Password:</label>
-            <input class="form-input round-corners" type="password" name="password" required>
+            <label for="user-password">Password:</label>
+            <input id="user-password" class="form-input round-corners" type="password" name="password" required>
         </div>
         <div class="form-item">
-            <label for="password">Confirm Password:</label>
-            <input class="form-input round-corners" type="password" name="check-password" required>
+            <label for="user-password">Confirm Password:</label>
+            <input id="user-password" class="form-input round-corners" type="password" name="confirm-password" required>
         </div>
 
         {% if error_msg %}<p id="error-msg">{{error_msg}}</p>{% endif %}
