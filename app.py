@@ -1,31 +1,22 @@
-from flask import Flask, render_template, request, session, url_for, redirect
-from functools import wraps 
 import sqlite3
 import contextlib
-import os
+
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
-from create_database import setup_database
+from flask import (
+    Flask, render_template, 
+    request, session, redirect
+)
 
-def login_required(func):
-    @wraps(func)
-    def decorator(*args, **kwargs):
-        # Check if user is logged in
-        if 'logged_in' not in session:
-            return redirect(url_for('login')) # User is not logged in; redirect to login page
-            
-        return func(*args, **kwargs)
-    
-    return decorator
+from create_database import setup_database
+from login_required import login_required
+
 
 app = Flask(__name__)
+app.secret_key = 'xpSm7p5bgJY8rNoBjGWiz5yjxM-NEBlW6SIBI62OkLc='
 
 database = "users.db"
 setup_database(name=database)
-# A secret key that will be used for securely signing the session cookie and 
-# can be used for any other security related needs by extensions or your application.
-# https://flask.palletsprojects.com/en/2.3.x/config/#SECRET_KEY
-app.secret_key = 'dawqwertysujgmhjkytreiwuysgxcvbfrnewkslaiwuebfmxwqvhgzj'
 
 
 @app.route('/login')
@@ -64,13 +55,8 @@ def verify_user():
     else:
         hashed_password = ph.hash(password)
         if ph.check_needs_rehash(hashed_password):
-            query = 'insert into users(username, password, email) values (:username, :password, :email);'
-
-            params = {
-                'username': request.form['username'],
-                'password': hashed_password,
-                'email': request.form['email']
-            }
+            query = 'update set password = :password where id = :id'
+            params = {'password': hashed_password, 'id': account[1]}
 
             # Will automatically close connection
             with contextlib.closing(sqlite3.connect(database)) as conn:
