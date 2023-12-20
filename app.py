@@ -20,14 +20,11 @@ database = "users.db"
 setup_database(name=database)
 
 
-@app.route('/login')
-def login():
-    return render_template('login.html')
-
-
-@app.route('/register')
-def register():
-    return render_template('register.html')
+@app.route('/')
+@login_required
+def index():
+    print(f'User data: {session}')
+    return render_template('index.html', username=session.get('username'))
 
 
 @app.route('/logout')
@@ -37,15 +34,11 @@ def logout():
     return redirect('/login')
 
 
-@app.route('/')
-@login_required
-def index():
-    print(f'User data: {session}')
-    return render_template('index.html', username=session.get('username'))
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'GET':
+        return render_template('login.html')
 
-
-@app.route('/verify-user', methods=['POST'])
-def verify_user():
     # Set data to variables
     username = request.form['username']
     password = request.form['password']
@@ -88,8 +81,11 @@ def verify_user():
     return redirect('/')
 
 
-@app.route('/register-user', methods=['POST'])
-def register_user():
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'GET':
+        return render_template('register.html')
+    
     # Store data to variables 
     password = request.form['password']
     confirm_password = request.form['confirm-password']
