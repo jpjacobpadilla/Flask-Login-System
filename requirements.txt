@@ -1,0 +1,2 @@
+argon2-cffi==23.1.0
+Flask==3.0.0
