@@ -27,9 +27,9 @@ def login():
 
 @app.route('/verify-user', methods=['POST'])
 def verify_user():
-    # Check if "username" and "password" POST requests exist (user submitted form)
-    if 'username' not in request.form or 'password' not in request.form:
-        return render_template('login.html', error_msg='Please fill out the form.')
+    keys = {'username', 'password'}
+    if len(keys - request.form.keys()) > 0: 
+        return render_template('login.html', error_msg='Please fill out the entire form')
     
     # Create variables for easy access
     username = request.form['username']
@@ -77,6 +77,18 @@ def verify_user():
 
 @app.route('/register-user', methods=['POST'])
 def register_user():
+    keys = {'username', 'password', 'email', 'confirm-password'}
+    if len(keys - request.form.keys()) > 0: 
+        return render_template('register.html', error_msg='Please fill out the entire form')
+
+    query = 'select id from users where username = :username;'
+    # Will automatically close connection
+    with contextlib.closing(sqlite3.connect(database)) as conn:
+        # Starts transaction that will auto commit at the end if no errors.
+        with conn:
+            conn.execute(query, {'username': request.form['username']}) 
+
+
     pw = PasswordHasher()
     hashed_password = pw.hash(request.form['password'])
 
