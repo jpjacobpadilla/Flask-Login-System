@@ -33,5 +33,5 @@ def setup_database(name: str) -> None:
 
     create_connection(name)
     create_table(name)
-    print('Created new example database.')
+    print('\033[91m', 'Creating new example database "users.db"', '\033[0m')
     
