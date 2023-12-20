@@ -131,6 +131,7 @@ def logout():
 @app.route('/')
 @login_required
 def index():
+    print(f'User data: {session}')
     return render_template('index.html', username=session.get('username'))
 
 
