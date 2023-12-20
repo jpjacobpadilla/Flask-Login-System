@@ -77,6 +77,7 @@ body {
 h1 {
     font-size: clamp(1rem, 7vw, 4rem);
     text-wrap: nowrap;
+    color: royalblue;
 }
 
 .gradiant-text {
