@@ -21,5 +21,9 @@ pip install -r requirements.txt
 ```
 
 ```console
+cd src
+```
+
+```console
 python app.py
 ```
