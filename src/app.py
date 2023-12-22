@@ -97,10 +97,8 @@ def register():
         return render_template('register.html', error='Passwords do not match')
     if not re.match(r'^[a-zA-Z0-9]+$', username):
         return render_template('register.html', error='Username must only be letters and numbers')
-    if len(username) < 3:
-        return render_template('register.html', error='Username must be 3 or more characters')
-    if len(username) > 25:
-        return render_template('register.html', error='Username must be 25 or less characters')
+    if not 3 < len(username) < 26:
+        return render_template('register.html', error='Username must be between 4 and 25 characters')
 
     query = 'select username from users where username = :username;'
     with contextlib.closing(sqlite3.connect(database)) as conn:
