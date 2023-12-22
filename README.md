@@ -3,7 +3,7 @@
 This repository contains the example website I've developed to accompany my article on [creating a secure Flask login system](https://jacobpadilla.com/articles/Python-Flask-Login-System).
 
 <p align="center">
-    <img src="example.gif" />
+    <img width="80%" src="example.gif" />
 </p>
 
 
