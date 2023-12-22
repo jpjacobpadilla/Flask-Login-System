@@ -15,8 +15,7 @@ def create_table(db_file: str) -> None:
     """ Create a table for users """
     query = '''
         CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY,
-            username TEXT NOT NULL,
+            username TEXT PRIMARY KEY,
             password TEXT NOT NULL,
             email TEXT
         );
@@ -33,5 +32,6 @@ def setup_database(name: str) -> None:
 
     create_connection(name)
     create_table(name)
+
     print('\033[91m', 'Creating new example database "users.db"', '\033[0m')
     

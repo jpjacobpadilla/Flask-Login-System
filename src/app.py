@@ -40,31 +40,30 @@ def login():
         return render_template('login.html')
 
     # Set data to variables
-    username = request.form['username']
-    password = request.form['password']
+    username = request.form.get('username')
+    password = request.form.get('password')
     
     # Attempt to query associated user data
-    query = 'select id, username, password, email from users where username = :username'
+    query = 'select username, password, email from users where username = :username'
 
     with contextlib.closing(sqlite3.connect(database)) as conn:
         with conn:
             account = conn.execute(query, {'username': username}).fetchone()
 
     if not account: 
-        return render_template('login.html', error_msg='Username does not exist')
+        return render_template('login.html', error='Username does not exist')
 
     # Verify password
     try:
         ph = PasswordHasher()
-        ph.verify(account[2], password)
+        ph.verify(account[1], password)
     except VerifyMismatchError:
-        return render_template('login.html', error_msg='Incorrect password')
+        return render_template('login.html', error='Incorrect password')
 
     # Check if password hash needs to be updated
-    hashed_password = ph.hash(password)
-    if ph.check_needs_rehash(hashed_password):
-        query = 'update set password = :password where id = :id'
-        params = {'password': hashed_password, 'id': account[0]}
+    if ph.check_needs_rehash(account[1]):
+        query = 'update set password = :password where username = :username'
+        params = {'password': ph.hash(password), 'username': account[0]}
 
         with contextlib.closing(sqlite3.connect(database)) as conn:
             with conn:
@@ -72,9 +71,8 @@ def login():
 
     # Set cookie for user session
     set_session(
-        id=account[0], 
-        username=account[1], 
-        email=account[3], 
+        username=account[0], 
+        email=account[2], 
         remember_me='remember-me' in request.form
     )
     
@@ -87,27 +85,29 @@ def register():
         return render_template('register.html')
     
     # Store data to variables 
-    password = request.form['password']
-    confirm_password = request.form['confirm-password']
-    username = request.form['username']
-    email = request.form['email']
+    password = request.form.get('password')
+    confirm_password = request.form.get('confirm-password')
+    username = request.form.get('username')
+    email = request.form.get('email')
 
     # Verify data
+    if len(password) < 8:
+        return render_template('register.html', error='Your password must be 8 or more characters')
     if password != confirm_password:
-        return render_template('register.html', error_msg='Passwords do not match')
+        return render_template('register.html', error='Passwords do not match')
     if not re.match(r'^[a-zA-Z0-9]+$', username):
-        return render_template('register.html', error_msg='Username must only be letters and numbers')
+        return render_template('register.html', error='Username must only be letters and numbers')
     if len(username) < 3:
-        return render_template('register.html', error_msg='Username must be 3 or more characters')
+        return render_template('register.html', error='Username must be 3 or more characters')
     if len(username) > 25:
-        return render_template('register.html', error_msg='Username must be 25 or less characters')
+        return render_template('register.html', error='Username must be 25 or less characters')
 
-    query = 'select id from users where username = :username;'
+    query = 'select username from users where username = :username;'
     with contextlib.closing(sqlite3.connect(database)) as conn:
         with conn:
             result = conn.execute(query, {'username': username}).fetchone()
     if result:
-        return render_template('register.html', error_msg='Username already exists')
+        return render_template('register.html', error='Username already exists')
 
     # Create password hash
     pw = PasswordHasher()
@@ -124,13 +124,8 @@ def register():
         with conn:
             result = conn.execute(query, params)
 
-    # We can log in the user right away since no email verification
-    set_session(
-        id=result.lastrowid, 
-        username=username, 
-        email=email
-    )
-
+    # We can log the user in right away since no email verification
+    set_session( username=username, email=email)
     return redirect('/')
 
 
