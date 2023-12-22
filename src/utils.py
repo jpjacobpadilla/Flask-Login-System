@@ -15,7 +15,6 @@ def login_required(func):
 
 
 def set_session(username: str, email: str, remember_me: bool = False) -> None:
-
     session['username'] = username
     session['email'] = email
     session.permanent = remember_me
