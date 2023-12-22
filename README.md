@@ -14,6 +14,7 @@ Interested in trying it out for yourself? Follow these steps to get the system u
 1. **Clone the Repository**
    ```
    $ git clone https://github.com/jpjacobpadilla/Flask-Login-System
+   $ cd Flask-Login-System
    ```
 
 2. **Create and Activate a Virtual Environment**
