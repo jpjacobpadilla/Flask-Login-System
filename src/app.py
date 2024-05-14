@@ -1,5 +1,6 @@
 import sqlite3
 import contextlib
+from datetime import timedelta
 import re
 
 from argon2 import PasswordHasher
@@ -14,10 +15,12 @@ from utils import login_required, set_session
 
 
 app = Flask(__name__)
-app.secret_key = 'xpSm7p5bgJY8rNoBjGWiz5yjxM-NEBlW6SIBI62OkLc='
 
-database = "users.db"
-setup_database(name=database)
+app.config['SECRET_KEY'] = 'xpSm7p5bgJY8rNoBjGWiz5yjxM-NEBlW6SIBI62OkLc='
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=15)
+
+setup_database(name='users.db')
 
 
 @app.route('/')
@@ -46,7 +49,7 @@ def login():
     # Attempt to query associated user data
     query = 'select username, password, email from users where username = :username'
 
-    with contextlib.closing(sqlite3.connect(database)) as conn:
+    with contextlib.closing(sqlite3.connect('users.db')) as conn:
         with conn:
             account = conn.execute(query, {'username': username}).fetchone()
 
@@ -65,7 +68,7 @@ def login():
         query = 'update set password = :password where username = :username'
         params = {'password': ph.hash(password), 'username': account[0]}
 
-        with contextlib.closing(sqlite3.connect(database)) as conn:
+        with contextlib.closing(sqlite3.connect('users.db')) as conn:
             with conn:
                 conn.execute(query, params)
 
@@ -101,7 +104,7 @@ def register():
         return render_template('register.html', error='Username must be between 4 and 25 characters')
 
     query = 'select username from users where username = :username;'
-    with contextlib.closing(sqlite3.connect(database)) as conn:
+    with contextlib.closing(sqlite3.connect('users.db')) as conn:
         with conn:
             result = conn.execute(query, {'username': username}).fetchone()
     if result:
@@ -118,7 +121,7 @@ def register():
         'email': email
     }
 
-    with contextlib.closing(sqlite3.connect(database)) as conn:
+    with contextlib.closing(sqlite3.connect('users.db')) as conn:
         with conn:
             result = conn.execute(query, params)
 
