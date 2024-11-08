@@ -46,5 +46,6 @@ def login_required(func):
 def set_session(username: str, remember_me: bool = False) -> None:
     session['username'] = username
     session['iat'] = datetime.now(timezone.utc).isoformat()
-    session['exp'] = ( datetime.now(timezone.utc) + (REMEMBER_ME_EXPIRATION_TIME if remember_me else DEFAULT_EXPIRATION_TIME)).isoformat()
+    exp_time_offset = REMEMBER_ME_EXPIRATION_TIME if remember_me else DEFAULT_EXPIRATION_TIME
+    session['exp'] = (datetime.now(timezone.utc) + exp_time_offset).isoformat()
     session.permanent = remember_me
