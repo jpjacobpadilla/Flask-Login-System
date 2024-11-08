@@ -7,11 +7,21 @@ from flask import redirect, url_for, session
 
 
 ACCESS_TOKEN_LIFETIME = timedelta(minutes=30)
+DEFAULT_EXPIRATION_TIME = timedelta(days=1)
+REMEMBER_ME_EXPIRATION_TIME = timedelta(days=15)
 
 
 def login_required(func):
     @wraps(func)
     def decorator(*args, **kwargs):
+        try:
+            expiration_time = datetime.fromisoformat(session.get('exp'))
+        except (TypeError, ValueError):
+            return redirect(url_for('login')) # Something wrong with Expiration value
+        
+        if expiration_time < datetime.now(timezone.utc):
+            return redirect(url_for('login'))
+
         try:
             issued_at = datetime.fromisoformat(session.get('iat'))
         except (TypeError, ValueError):
@@ -33,8 +43,8 @@ def login_required(func):
     return decorator
 
 
-def set_session(username: str, email: str, remember_me: bool = False) -> None:
+def set_session(username: str, remember_me: bool = False) -> None:
     session['username'] = username
-    session['email'] = email
     session['iat'] = datetime.now(timezone.utc).isoformat()
+    session['exp'] = ( datetime.now(timezone.utc) + (REMEMBER_ME_EXPIRATION_TIME if remember_me else DEFAULT_EXPIRATION_TIME)).isoformat()
     session.permanent = remember_me

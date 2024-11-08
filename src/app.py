@@ -16,7 +16,7 @@ from utils import login_required, set_session
 
 app = Flask(__name__)
 
-app.config['SECRET_KEY'] = 'xpSm7p5bgJY8rNoBjGWiz5yjxM-NEBlW6SIBI62OkLc='
+app.config['SECRET_KEY'] = 'EXAMPLE_xpSm7p5bgJY8rNoBjGWiz5yjxMNlW6231IBI62OkLc='
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=15)
 
@@ -75,7 +75,6 @@ def login():
     # Set cookie for user session
     set_session(
         username=account[0], 
-        email=account[2], 
         remember_me='remember-me' in request.form
     )
     
@@ -126,7 +125,7 @@ def register():
             result = conn.execute(query, params)
 
     # We can log the user in right away since no email verification
-    set_session( username=username, email=email)
+    set_session(username=username)
     return redirect('/')
 
 
