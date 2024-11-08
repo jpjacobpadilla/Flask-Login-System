@@ -1,7 +1,7 @@
+import re
 import sqlite3
 import contextlib
 from datetime import timedelta
-import re
 
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
