@@ -47,7 +47,7 @@ def login():
     password = request.form.get('password')
     
     # Attempt to query associated user data
-    query = 'select username, password, email from users where username = :username'
+    query = 'select username, password, email from users where username = :username;'
 
     with contextlib.closing(sqlite3.connect('users.db')) as conn:
         with conn:
@@ -65,7 +65,7 @@ def login():
 
     # Check if password hash needs to be updated
     if ph.check_needs_rehash(account[1]):
-        query = 'update set password = :password where username = :username'
+        query = 'update set password = :password where username = :username;'
         params = {'password': ph.hash(password), 'username': account[0]}
 
         with contextlib.closing(sqlite3.connect('users.db')) as conn:
